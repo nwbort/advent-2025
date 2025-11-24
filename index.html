@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advent Riddles 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Urbanist:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #0f1729;
+            --winter-blue: #1a2847;
+            --ice: #e8f3ff;
+            --snow: #ffffff;
+            --gold: #d4af37;
+            --text: #1a2847;
+            --correct: #2d6a4f;
+            --wrong: #9d4e4e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Urbanist', sans-serif;
+            background: linear-gradient(135deg, var(--midnight) 0%, var(--winter-blue) 100%);
+            color: var(--snow);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Snowflake effect */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1em;
+            animation: fall linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--snow);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
+            text-shadow: 0 2px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--ice);
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .day-box {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .day-box:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .day-box.completed::after {
+            content: '★';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            color: var(--gold);
+            font-size: 0.8rem;
+        }
+
+        .day-box.current {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .day-box.locked {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(212, 175, 55, 0);
+            }
+        }
+
+        .riddle-section {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .riddle-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--winter-blue) 100%);
+        }
+
+        .day-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .riddle-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-style: italic;
+            color: var(--winter-blue);
+        }
+
+        .answer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-family: 'Urbanist', sans-serif;
+            border: 2px solid rgba(26, 40, 71, 0.2);
+            border-radius: 12px;
+            background: white;
+            color: var(--text);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        button {
+            padding: 1rem 3rem;
+            font-size: 1rem;
+            font-family: 'Urbanist', sans-serif;
+            font-weight: 500;
+            background: var(--winter-blue);
+            color: var(--snow);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: var(--midnight);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 500;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+            min-height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback.correct {
+            background: rgba(45, 106, 79, 0.1);
+            color: var(--correct);
+            border: 2px solid var(--correct);
+        }
+
+        .feedback.wrong {
+            background: rgba(157, 78, 78, 0.1);
+            color: var(--wrong);
+            border: 2px solid var(--wrong);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .calendar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .riddle-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .riddle-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowflakes -->
+    <div id="snowflakes"></div>
+
+    <div class="container">
+        <header>
+            <h1>Advent Riddles</h1>
+            <p class="subtitle">December 2025</p>
+        </header>
+
+        <div class="calendar-grid" id="calendar"></div>
+
+        <div class="riddle-section">
+            <div class="day-number" id="dayNumber">Day 1</div>
+            <p class="riddle-text" id="riddleText">Select a day from the calendar above to begin</p>
+            <div class="answer-section">
+                <input type="text" id="answerInput" placeholder="Enter your answer..." autocomplete="off">
+                <button id="checkButton">Check Answer</button>
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Riddles data - one for each day
+        const riddles = [
+            { day: 1, riddle: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?", answer: "map" },
+            { day: 2, riddle: "What has hands but cannot clap?", answer: "clock" },
+            { day: 3, riddle: "What gets wetter the more it dries?", answer: "towel" },
+            { day: 4, riddle: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", answer: "echo" },
+            { day: 5, riddle: "The more you take, the more you leave behind. What am I?", answer: "footsteps" },
+            { day: 6, riddle: "What has a head and a tail but no body?", answer: "coin" },
+            { day: 7, riddle: "What can travel around the world while staying in a corner?", answer: "stamp" },
+            { day: 8, riddle: "What has keys but no locks, space but no room, and you can enter but can't go inside?", answer: "keyboard" },
+            { day: 9, riddle: "What comes once in a minute, twice in a moment, but never in a thousand years?", answer: "m" },
+            { day: 10, riddle: "I'm tall when I'm young, and I'm short when I'm old. What am I?", answer: "candle" },
+            { day: 11, riddle: "What has a neck but no head?", answer: "bottle" },
+            { day: 12, riddle: "What runs but never walks, has a mouth but never talks?", answer: "river" },
+            { day: 13, riddle: "What can fill a room but takes up no space?", answer: "light" },
+            { day: 14, riddle: "I have branches, but no fruit, trunk, or leaves. What am I?", answer: "bank" },
+            { day: 15, riddle: "What goes up but never comes down?", answer: "age" },
+            { day: 16, riddle: "I'm light as a feather, yet the strongest person can't hold me for more than 5 minutes. What am I?", answer: "breath" },
+            { day: 17, riddle: "What has one eye but cannot see?", answer: "needle" },
+            { day: 18, riddle: "What belongs to you but is used more by others?", answer: "name" },
+            { day: 19, riddle: "What has four wheels and flies?", answer: "garbage truck" },
+            { day: 20, riddle: "What can you catch but not throw?", answer: "cold" },
+            { day: 21, riddle: "What has legs but doesn't walk?", answer: "table" },
+            { day: 22, riddle: "What is always in front of you but can't be seen?", answer: "future" },
+            { day: 23, riddle: "What goes through cities and fields, but never moves?", answer: "road" },
+            { day: 24, riddle: "I am not alive, but I grow; I don't have lungs, but I need air; I don't have a mouth, but water kills me. What am I?", answer: "fire" }
+        ];
+
+        let currentDay = 1;
+
+        // Create snowflakes
+        function createSnowflakes() {
+            const container = document.getElementById('snowflakes');
+            for (let i = 0; i < 30; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.innerHTML = '❅';
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                snowflake.style.animationDelay = Math.random() * 10 + 's';
+                snowflake.style.fontSize = (Math.random() * 0.5 + 0.5) + 'em';
+                snowflake.style.opacity = Math.random() * 0.5 + 0.1;
+                container.appendChild(snowflake);
+            }
+        }
+
+        // Get current December day (1-24)
+        function getCurrentDecemberDay() {
+            const now = new Date();
+            const month = now.getMonth(); // 0-indexed, so December is 11
+            const day = now.getDate();
+            
+            // Only return day if it's December 1-24
+            if (month === 11 && day >= 1 && day <= 24) {
+                return day;
+            }
+            // For testing/demo, return 1 if not in December range
+            return 1;
+        }
+
+        // Check if a day is completed
+        function isDayCompleted(day) {
+            const completed = localStorage.getItem(`advent_day_${day}`);
+            return completed === 'true';
+        }
+
+        // Mark day as completed
+        function markDayCompleted(day) {
+            localStorage.setItem(`advent_day_${day}`, 'true');
+            updateCalendar();
+        }
+
+        // Create calendar
+        function createCalendar() {
+            const calendar = document.getElementById('calendar');
+            const today = getCurrentDecemberDay();
+            
+            for (let i = 1; i <= 24; i++) {
+                const dayBox = document.createElement('div');
+                dayBox.className = 'day-box';
+                dayBox.textContent = i;
+                
+                if (i === today) {
+                    dayBox.classList.add('current');
+                }
+                
+                if (isDayCompleted(i)) {
+                    dayBox.classList.add('completed');
+                }
+                
+                // Lock future days
+                if (i > today) {
+                    dayBox.classList.add('locked');
+                } else {
+                    dayBox.addEventListener('click', () => loadRiddle(i));
+                }
+                
+                calendar.appendChild(dayBox);
+            }
+        }
+
+        // Update calendar display
+        function updateCalendar() {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+            createCalendar();
+        }
+
+        // Load riddle for a specific day
+        function loadRiddle(day) {
+            const today = getCurrentDecemberDay();
+            if (day > today) return; // Don't allow future days
+            
+            currentDay = day;
+            const riddleData = riddles.find(r => r.day === day);
+            
+            if (riddleData) {
+                document.getElementById('dayNumber').textContent = `Day ${day}`;
+                document.getElementById('riddleText').textContent = riddleData.riddle;
+                document.getElementById('answerInput').value = '';
+                document.getElementById('feedback').textContent = '';
+                document.getElementById('feedback').className = 'feedback';
+                
+                // If already completed, show that
+                if (isDayCompleted(day)) {
+                    document.getElementById('feedback').textContent = '✓ You\'ve already solved this riddle!';
+                    document.getElementById('feedback').className = 'feedback correct';
+                }
+            }
+        }
+
+        // Check answer
+        function checkAnswer() {
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            const riddleData = riddles.find(r => r.day === currentDay);
+            const feedback = document.getElementById('feedback');
+            
+            if (!userAnswer) {
+                feedback.textContent = 'Please enter an answer';
+                feedback.className = 'feedback';
+                return;
+            }
+            
+            if (riddleData && userAnswer === riddleData.answer.toLowerCase()) {
+                feedback.textContent = '🎉 Correct! Well done!';
+                feedback.className = 'feedback correct';
+                markDayCompleted(currentDay);
+            } else {
+                feedback.textContent = '❌ Not quite right. Try again!';
+                feedback.className = 'feedback wrong';
+            }
+        }
+
+        // Initialize
+        createSnowflakes();
+        createCalendar();
+        loadRiddle(getCurrentDecemberDay());
+
+        // Event listeners
+        document.getElementById('checkButton').addEventListener('click', checkAnswer);
+        document.getElementById('answerInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
